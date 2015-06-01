@@ -37,7 +37,10 @@ public class DBManager {
                 statement.setObject(i + 1, objects[i]);
             }
 
-            statement.execute();
+            boolean flag = statement.execute();
+            if(flag){
+            	System.out.println("插入数据成功");
+            }
         } catch (SQLException e) {
             System.out.println(e);
         } finally {

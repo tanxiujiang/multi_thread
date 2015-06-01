@@ -5,7 +5,11 @@ import harry.tan.thread.thread.StudentThread;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * http://greemranqq.iteye.com/blog/1969273
+ * @author Administrator
+ *
+ */
 public class Test {
     public static void main(String[] args) {
         Test test = new Test();
