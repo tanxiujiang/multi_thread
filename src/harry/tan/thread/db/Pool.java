@@ -7,9 +7,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -19,10 +17,9 @@ public class Pool implements DataSource {
     private final static String           DBUrl        = "jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8";
     private final static String           DBUser       = "root";
     private final static String           DBPassword   = "123456";
-    private final static int              minSize      = 20;
+    private final static int              minSize      = 50;
     private final static String           CLOSE_METHOD = "close";
-    private final static Boolean 	      flag 		   = true;
-    
+
     static {
         try {
             Class.forName(DBDrive);
@@ -34,8 +31,12 @@ public class Pool implements DataSource {
                             @Override
                             public Object invoke(Object pProxy, Method pMethod, Object[] pArgs) throws Throwable {
                                 if (pMethod != null && pMethod.getName().equals(CLOSE_METHOD)) {
+                                    synchronized (connections) {
+                                        connections.add((Connection) pProxy);
+//                                        System.out.println("回收资源连接……");
+                                        connections.notifyAll();
+                                    }
                                     
-                                	Pool.relaseConn(conn);
                                     return null;
                                 } else {
                                     return pMethod.invoke(conn, pArgs);
@@ -105,7 +106,7 @@ public class Pool implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-    	return null;
+        return null;
     }
 
 
@@ -115,36 +116,22 @@ public class Pool implements DataSource {
         return null;
     }
 
-    public  Connection getConn() throws SQLException{
-    	synchronized (flag) {
-    		if(connections.size() < 1){
-        		try {
-        			flag.wait();
-    			} catch (InterruptedException e) {
-    				e.printStackTrace();
-    			} 
-        	}
-    		
-    		System.out.println(Thread.currentThread().getName()+":获取资源链接……");
-    		System.out.println("剩余可用连接数："+connections.size());
-        	return connections.removeFirst();
-		}
+
+
+    public Connection getConn() {
+        synchronized (connections) {
+            if (connections.size() == 0) {
+                try {
+                    connections.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+//            System.err.println("获取资源连接……");
+            Connection conn = connections.removeFirst();
+//            System.err.println("剩余连接数：" + connections.size());
+            return conn;
+        }
     }
-
-    public  static void relaseConn(Connection pConn){
-    	synchronized(flag){
-    		connections.addLast(pConn);
-    		System.out.println("释放链接……");
-    		if(connections.size()  > 1){
-    			flag.notify();
-        	}
-    	}
-    }
-
-
-	@Override
-	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

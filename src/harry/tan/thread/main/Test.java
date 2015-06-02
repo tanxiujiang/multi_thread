@@ -5,23 +5,47 @@ import harry.tan.thread.thread.StudentThread;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 /**
  * http://greemranqq.iteye.com/blog/1969273
  * @author Administrator
  *
  */
 public class Test {
+    
+    private static CountDownLatch countdownLatch = null;
+    private final static int threadNumbers = 10000;
+    
     public static void main(String[] args) {
+        
+        // 
+        countdownLatch = new CountDownLatch(threadNumbers);
+        
         Test test = new Test();
         List<Student> students = test.getAllStudents();
         int j = 1;
-        for (int i = 0; i < students.size(); i += 25000) {
-            List<Student> sus = students.subList(i, i + 25000);
-            Thread thead = new Thread(new StudentThread(sus));
+        
+        // 记录开始时间
+        long start = System.currentTimeMillis();
+        
+        final  int skip = students.size()/threadNumbers;
+        
+        for (int i = 0; i < students.size(); i += skip) {
+            List<Student> sus = students.subList(i, i + skip);
+            Thread thead = new Thread(new StudentThread(sus,countdownLatch));
             thead.setName("线程" + j);
             j++;
             thead.start();
         }
+        
+        
+        try {
+            countdownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println(threadNumbers+"线程执行时间统计："+(System.currentTimeMillis()-start));
     }
 
 

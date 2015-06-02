@@ -6,7 +6,6 @@ import java.util.concurrent.BlockingQueue;
 public class PrintLog {
 	public static void main(String[] args) {
 
-		// 来一个阻塞队列
 		final BlockingQueue<String> queue = new ArrayBlockingQueue<String>(16);
 		for (int i = 0; i < 4; i++) {
 			new Thread(new Runnable() {
@@ -15,9 +14,10 @@ public class PrintLog {
 				public void run() {
 					while(true){
 						try {
+						    
 							String log = queue.take();
+							System.out.println(Thread.currentThread().getName()+"取出数据，打印日志");
 							parseLog(log);
-							
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -30,6 +30,7 @@ public class PrintLog {
 			final String log = ""+(i+1);
 			{
 				try {
+				    System.out.println("阻塞队列中准备放入数据");
 					queue.put(log);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -39,7 +40,7 @@ public class PrintLog {
 	}
 	
 	public static void parseLog(String log){
-		System.out.println(log+"："+System.currentTimeMillis()/1000);
+		System.out.println(log+"当前时间："+System.currentTimeMillis()/1000);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
