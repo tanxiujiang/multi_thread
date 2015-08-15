@@ -9,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class StudentThread implements Runnable {
     private List<Student>  students       = new ArrayList<Student>();
-    private final String   sql            = "INSERT INTO student(name,sex,age) VALUES(?,?,?)";
+    private final String   sql            = "INSERT INTO t2(name,sex,age) VALUES(?,?,?)";
     private DBManager      db             = new DBManager();
     private long           start          = 0;
     private CountDownLatch countDownLatch = null;
@@ -29,8 +29,8 @@ public class StudentThread implements Runnable {
         System.out.println(Thread.currentThread().getName() + "开始干活！");
         start = System.currentTimeMillis();
         for (Student student : students) {
-            // db.executeUpdate(sql,
-            // student.getName(),student.getSex(),student.getAge());
+             db.executeUpdate(sql,
+             student.getName(),student.getSex(),student.getAge());
             try {
 
                 // 模拟处理存储时间

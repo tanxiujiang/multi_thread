@@ -16,12 +16,13 @@ public class BufferByReentrantLock implements IBuffer {
 
             // 模拟要处理很长时间
             for (;;) {
-                if (System.currentTimeMillis() - startTime > 4000)
+                if (System.currentTimeMillis() - startTime > 2000)
                     break;
             }
             System.out.println("终于写完了");
         } finally {
             lock.unlock();
+            System.out.println("写操作释放锁");
         }
 
     }

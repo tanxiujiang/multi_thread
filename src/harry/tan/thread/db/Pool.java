@@ -7,7 +7,9 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -17,7 +19,7 @@ public class Pool implements DataSource {
     private final static String           DBUrl        = "jdbc:mysql://localhost:3306/test?characterEncoding=UTF-8";
     private final static String           DBUser       = "root";
     private final static String           DBPassword   = "123456";
-    private final static int              minSize      = 50;
+    private final static int              minSize      = 20;
     private final static String           CLOSE_METHOD = "close";
 
     static {
@@ -134,4 +136,12 @@ public class Pool implements DataSource {
             return conn;
         }
     }
+
+
+
+	@Override
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -14,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
 public class Test {
     
     private static CountDownLatch countdownLatch = null;
-    private final static int threadNumbers = 10000;
+    private final static int threadNumbers = 10;
     
     public static void main(String[] args) {
         
@@ -60,7 +60,7 @@ public class Test {
 
         List<Student> students = new ArrayList<Student>();
         String sex = "男";
-        for (int i = 1; i <= 100000; i++) {
+        for (int i = 1; i <= 1000000; i++) {
             Student student = new Student();
 
             student.setName("harry");

@@ -28,6 +28,7 @@ public class DBManager {
         PreparedStatement statement = null;
         try {
             conn = pool.getConn();
+            conn.setAutoCommit(false);
             statement = conn.prepareStatement(sql);
             if (statement.getParameterMetaData().getParameterCount() != objects.length) {
                 throw new RuntimeException("参数个数不匹配");
